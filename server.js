@@ -1,19 +1,39 @@
-const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
+import express, { Request, Response } from 'express';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import multer from 'multer';
+import path from 'path';
 
-const app = express();
-const server = http.createServer(app);
-
-const io = socketIo(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-  }
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); 
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  },
 });
 
-app.get('/', (req, res) => {
-  res.send('Chat Server is running');
+const upload = multer({ storage });
+
+const app = express();
+const server = createServer(app);
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+const io = new Server(server, {
+  cors: {
+    origin: "*", 
+    methods: ["GET", "POST"],
+  },
+});
+
+app.post('/upload', upload.single('file'), (req: express.Request, res: express.Response) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
+  const fileUrl = `http://localhost:3001/uploads/${req.file.filename}`;
+  io.emit('file uploaded', { fileUrl, filename: req.file.originalname });
+  res.json({ fileUrl });
 });
 
 io.on('connection', (socket) => {
@@ -29,6 +49,7 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(3001, () => {
-  console.log('Server is running on port 3001');
+const PORT = 3001;
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
