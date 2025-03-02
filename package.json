@@ -1,0 +1,41 @@
+{
+  "name": "elysia-backend",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "bun --inspect run --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir dist",
+    "start": "bun dist/index.js"
+  },
+  "dependencies": {
+    "@elysiajs/cookie": "^0.8.0",
+    "@elysiajs/cors": "^1.2.0",
+    "@elysiajs/jwt": "^1.2.0",
+    "@elysiajs/swagger": "^1.2.0",
+    "@google/generative-ai": "^0.21.0",
+    "@grotto/logysia": "^0.1.6",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/nodemailer": "^6.4.17",
+    "@types/socket.io": "^3.0.2",
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.5.1",
+    "dotenv": "^16.4.7",
+    "drizzle-kit": "^0.20.18",
+    "elysia": "^1.2.10",
+    "logestic": "^1.2.4",
+    "nanoid": "^5.0.9",
+    "nodemailer": "^6.9.16",
+    "postgres": "^3.4.5",
+    "socket.io": "^4.8.1",
+    "sslcommerz": "^1.7.0",
+    "sslcommerz-lts": "^1.1.0",
+    "sslcommerz-nodejs": "^1.0.8",
+    "streamifier": "^0.1.1",
+    "uuid": "^11.0.5",
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.1.17",
+    "bun-types": "latest",
+    "csv-parser": "^3.1.0"
+  }
+}

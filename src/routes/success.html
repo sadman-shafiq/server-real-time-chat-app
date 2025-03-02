@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Payment Successful</title>
+<script>
+  window.addEventListener('load', function() { // Use 'load' to ensure the form is available
+      // Extract data from the URL parameters (or from hidden form fields)
+      const urlParams = new URLSearchParams(window.location.search);
+      const tranId = urlParams.get('tran_id'); 
+      // ... get other necessary data
+
+      // Replace 'my-app-scheme' with your app's actual scheme
+      window.location.href = `my-app-scheme://payment-success?tran_id=${tranId}`; // Pass data as needed
+
+
+      // Prevent any form submission (though SSLCommerz shouldn't be injecting one here)
+      const form = document.querySelector('form');
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+        });
+      }
+  });
+</script>
+</head>
+<body>
+  <!-- You can add loading indicators or messages here if desired -->
+  <p>Processing payment success. Redirecting back to the app...</p>
+</body>
+</html>
