@@ -1,4 +1,4 @@
-CREATE TABLE users (
+CREATE TABLE rm_users (
             user_id SERIAL PRIMARY KEY,
             username VARCHAR(255) NOT NULL UNIQUE,
             password_hash VARCHAR(255) NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE users (
             address TEXT
         );
 
-        ALTER TABLE users ADD COLUMN avatar TEXT;
+        ALTER TABLE rm_users ADD COLUMN avatar TEXT;
 
  
 CREATE TABLE conversations (
@@ -25,7 +25,7 @@ CREATE TABLE conversations (
 CREATE TABLE conversation_members (
     member_id SERIAL PRIMARY KEY,
     conversation_id INT REFERENCES conversations(conversation_id) ON DELETE CASCADE,
-    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+    user_id INT REFERENCES rm_users(user_id) ON DELETE CASCADE,
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (conversation_id, user_id)
 );
@@ -33,13 +33,13 @@ CREATE TABLE conversation_members (
 CREATE TABLE messages (
     message_id SERIAL PRIMARY KEY,
     conversation_id INT REFERENCES conversations(conversation_id) ON DELETE CASCADE,
-    sender_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+    sender_id INT REFERENCES rm_users(user_id) ON DELETE CASCADE,
     content TEXT NOT NULL,
     message_type VARCHAR(20) DEFAULT 'text', -- text, image, video, file, etc.
     sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_read BOOLEAN DEFAULT FALSE
 );
-ALTER TABLE messages ADD COLUMN reciever_id INT REFERENCES users(user_id) ON DELETE CASCADE;
+ALTER TABLE messages ADD COLUMN reciever_id INT REFERENCES rm_users(user_id) ON DELETE CASCADE;
 
 
 ALTER Table messages ADD COLUMN expiresAt TIMESTAMP;
@@ -47,7 +47,7 @@ ALTER Table messages ADD COLUMN expiresAt TIMESTAMP;
 CREATE TABLE message_status (
     status_id SERIAL PRIMARY KEY,
     message_id INT REFERENCES messages(message_id) ON DELETE CASCADE,
-    user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+    user_id INT REFERENCES rm_users(user_id) ON DELETE CASCADE,
     read_at TIMESTAMP
 );
 

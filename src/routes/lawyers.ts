@@ -31,7 +31,7 @@ export const lawyers = new Elysia()
               l.lawyer_id, l.specialization, l.bar_number, l.fees, l.biography, l.rating, l.location, l.practice_areas, l.profile_picture_url, l.office_contact_number, l.nid,
               u.user_id, u.username, u.email, u.first_name, u.last_name, u.phone_number, u.address, u.created_at as user_created_at
               FROM lawyers l
-              JOIN users u ON l.user_id = u.user_id
+              JOIN rm_users u ON l.user_id = u.user_id
               ORDER BY l.rating DESC;
           `;
           return new Response(JSON.stringify({lawyers}), {status:200});
@@ -53,7 +53,7 @@ export const lawyers = new Elysia()
             l.profile_picture_url, l.office_contact_number, l.nid,
             u.user_id, u.username, u.email, u.first_name, u.last_name, u.phone_number, u.address, u.created_at as user_created_at
             FROM lawyers l
-            JOIN users u ON l.user_id = u.user_id
+            JOIN rm_users u ON l.user_id = u.user_id
             WHERE l.lawyer_id = ${id};
             `;
             if (!lawyer) {
@@ -90,7 +90,7 @@ export const lawyers = new Elysia()
                       l.lawyer_id, l.specialization, l.bar_number, l.biography, l.rating, l.location, l.practice_areas, l.profile_picture_url, l.office_contact_number, l.nid,
                       u.user_id, u.username, u.email, u.first_name, u.last_name, u.phone_number, u.address, u.created_at as user_created_at
                   FROM lawyers l
-                  RIGHT JOIN users u ON l.user_id = u.user_id
+                  RIGHT JOIN rm_users u ON l.user_id = u.user_id
                   WHERE l.lawyer_id = ${lawyerId};
               `;
 
@@ -248,13 +248,13 @@ export const lawyers = new Elysia()
           const result = await sql`
           SELECT
           lawyers.*,
-          users.first_name,
-          users.last_name,
-          users.email,
-          users.profile_picture_url,
-          users.phone_number
+          rm_users.first_name,
+          rm_users.last_name,
+          rm_users.email,
+          rm_users.profile_picture_url,
+          rm_users.phone_number
           FROM lawyers
-          INNER JOIN users ON lawyers.user_id = users.user_id
+          INNER JOIN rm_users ON lawyers.user_id = rm_users.user_id
           WHERE ST_DWithin(
           geography(ST_MakePoint(longitude, latitude)),
           geography(ST_MakePoint(${lon}, ${lat})),
@@ -287,7 +287,7 @@ export const lawyers = new Elysia()
                   l.lawyer_id, l.specialization, l.bar_number, l.biography, l.rating, l.location, l.practice_areas, l.profile_picture_url, l.office_contact_number, l.nid,
                   u.user_id, u.username, u.email, u.first_name, u.last_name, u.phone_number, u.address, u.created_at as user_created_at
                   FROM lawyers l
-                  JOIN users u ON l.user_id = u.user_id
+                  JOIN rm_users u ON l.user_id = u.user_id
                   WHERE l.specialization ILIKE ${'%' + specialization + '%'}
                   OR l.location ILIKE ${'%' + location + '%'}
                   OR l.practice_areas ILIKE ${'%' + practice_areas + '%'}

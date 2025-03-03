@@ -57,7 +57,7 @@ export const clients = new Elysia()
                       c.client_id, c.created_at as client_created_at,
                       u.user_id, u.username, u.email, u.first_name, u.last_name, u.phone_number, u.address, u.created_at as user_created_at
                   FROM clients c
-                  JOIN users u ON c.user_id = u.user_id
+                  JOIN rm_users u ON c.user_id = u.user_id
                   WHERE c.client_id = ${id} AND c.lawyer_id = ${lawyer_id};
               `;
               if (!client) {

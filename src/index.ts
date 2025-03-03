@@ -23,7 +23,7 @@ import { payment } from './routes/payments';
     .use(swagger())
     .group('/payments', app => payment)
   
-      // --- Authentication Routes (Adapted for 'users' table) ---
+      // --- Authentication Routes (Adapted for 'rm_users' table) ---
       .group('/auth', (app) => app
           .post('/signup', async ({ body, set, jwt, cookie }) => {
               const { password, email, first_name, last_name, user_type, address, nid, bar_number } = body;
@@ -36,7 +36,7 @@ import { payment } from './routes/payments';
               try {
                   if(user_type === 'client'){
                   const [user] = await sql`
-                      INSERT INTO users (username, password_hash, email, first_name, last_name, user_type)
+                      INSERT INTO rm_users (username, password_hash, email, first_name, last_name, user_type)
                       VALUES (${username}, ${passwordHash}, ${email}, ${first_name}, ${last_name}, ${user_type})
                       RETURNING user_id, username, email, user_type;
                   `;
@@ -44,7 +44,7 @@ import { payment } from './routes/payments';
                   return { user };}
                   else if(user_type === 'lawyer'){
                     const [user] = await sql`
-                      INSERT INTO users (username, password_hash, email, first_name, last_name, user_type)
+                      INSERT INTO rm_users (username, password_hash, email, first_name, last_name, user_type)
                       VALUES (${username}, ${passwordHash}, ${email}, ${first_name}, ${last_name}, ${user_type})
                       RETURNING user_id, username, email, user_type, first_name, last_name, phone_number, address, profile_picture_url`;
                      console.log("User: ", user);
@@ -100,7 +100,7 @@ import { payment } from './routes/payments';
   
               try {
                   const [user] = await sql`
-                      SELECT * FROM users WHERE email = ${email} AND user_type = ${user_type}
+                      SELECT * FROM rm_users WHERE email = ${email} AND user_type = ${user_type}
                   `;
   
                   if (!user) {
@@ -173,7 +173,7 @@ import { payment } from './routes/payments';
               let otpData;
               try{
               var [res] = await sql`
-              SELECT user_id, phone_number, is_verified FROM users WHERE email = ${email}
+              SELECT user_id, phone_number, is_verified FROM rm_users WHERE email = ${email}
               `;
                 console.log("res: ", res);
               if(res.length === 0) {
@@ -241,7 +241,7 @@ import { payment } from './routes/payments';
               }
   
               const [resQ] = await sql`
-                  UPDATE users
+                  UPDATE rm_users
                   SET is_verified = true
                   WHERE user_id = ${user.user_id} RETURNING *
               `;
@@ -275,7 +275,7 @@ import { payment } from './routes/payments';
   
               try {
               const [user] = await sql`
-                  SELECT * FROM users WHERE email = ${email}
+                  SELECT * FROM rm_users WHERE email = ${email}
               `;
   
               if (!user) {
@@ -325,7 +325,7 @@ import { payment } from './routes/payments';
               const hashedPassword = await bcrypt.hash(newPassword, 10);
   
               await sql`
-                  UPDATE users
+                  UPDATE rm_users
                   SET password = ${hashedPassword}
                   WHERE user_id = ${reset.user_id}
               `;
@@ -358,7 +358,7 @@ import { payment } from './routes/payments';
               if(!userId) { return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401,});}
   
               const [res] = await sql`
-              update users set address = ${JSON.stringify(address)} where user_id = ${userId}  returning *
+              update rm_users set address = ${JSON.stringify(address)} where user_id = ${userId}  returning *
               `;
                 console.log("Address set successfully: ", res);
               return { message: 'Address updated successfully', data: JSON.stringify(res) };
@@ -395,7 +395,7 @@ import { payment } from './routes/payments';
               }
   
               const [res] = await sql`
-              UPDATE users
+              UPDATE rm_users
               SET ${sql(updateData)}
               WHERE user_id = ${userId}
               RETURNING *
@@ -429,7 +429,7 @@ import { payment } from './routes/payments';
           const {password, phone_number} = body;
           try {
               const [user] = await sql`
-              SELECT * FROM public.users WHERE user_id = ${userId}
+              SELECT * FROM public.rm_users WHERE user_id = ${userId}
               `;
               
               if(!user) {
@@ -453,7 +453,7 @@ import { payment } from './routes/payments';
   
           try {
               const result = await sql`
-              DELETE FROM users WHERE user_id = ${userId} RETURNING *
+              DELETE FROM rm_users WHERE user_id = ${userId} RETURNING *
               `;
               console.log("User deleted successfully: ", result);
               if(result){return new Response(JSON.stringify({ message: 'User deleted successfully', result }), { status: 200 } );}
@@ -504,6 +504,7 @@ import { payment } from './routes/payments';
                 try {
                     const cur_time = new Date(Date.now()); 
                     const expired_time = new Date(Date.now() + expiresAt * 1000);
+          
                   const [message] = await sql`
                     INSERT INTO messages (content,  sender_id, expiresAt, sent_at, reciever_id)
                     VALUES (
@@ -545,7 +546,7 @@ import { payment } from './routes/payments';
      */
                     const conversations = await sql`
                     SELECT DISTINCT u.user_id, u.first_name ,u.email, u.avatar
-             FROM users u
+             FROM rm_users u
              JOIN messages m ON u.user_id = m.sender_id OR u.user_id = m.reciever_id
              WHERE (m.sender_id = ${userId} OR m.reciever_id = ${userId}) and u.user_id != ${userId}; 
                      

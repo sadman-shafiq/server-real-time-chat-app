@@ -163,7 +163,7 @@ console.log("Error in inserting into payments (save-unpaid): ", e)
       VALUES(${userId}, ${body.cus_city}, ${body.service_category['street']}, ${body.service_place['town']}, ${body.service_place['district']}, ${body.service_place['zip']}, ${body.service_place['country']??'Bangladesh'})
       `
       const q2 = await sql`
-          UPDATE public.users
+          UPDATE public.rm_users
         SET address = (
           SELECT jsonb_build_object(
             'street', street,

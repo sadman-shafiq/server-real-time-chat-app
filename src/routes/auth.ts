@@ -35,7 +35,7 @@ export const auth = new Elysia({ prefix: '/auth' })
         try {
             if(user_type === 'user'){
             const [user] = await sql`
-                INSERT INTO users (username, password_hash, email, first_name, last_name, user_type)
+                INSERT INTO rm_users (username, password_hash, email, first_name, last_name, user_type)
                 VALUES (${username}, ${passwordHash}, ${email}, ${first_name}, ${last_name}, ${user_type})
                 RETURNING user_id, username, email, user_type;
             `;
@@ -43,7 +43,7 @@ export const auth = new Elysia({ prefix: '/auth' })
             return { user };}
             else if(user_type === 'lawyer'){
               const [user] = await sql`
-                INSERT INTO users (username, password_hash, email, first_name, last_name, user_type)
+                INSERT INTO rm_users (username, password_hash, email, first_name, last_name, user_type)
                 VALUES (${username}, ${passwordHash}, ${email}, ${first_name}, ${last_name}, ${user_type})
                 RETURNING user_id, username, email, user_type`;
                console.log("User: ", user);
@@ -99,7 +99,7 @@ export const auth = new Elysia({ prefix: '/auth' })
 
         try {
             const [user] = await sql`
-                SELECT user_id, username, password_hash, user_type, email FROM users WHERE email = ${email} AND user_type = ${user_type}
+                SELECT user_id, username, password_hash, user_type, email FROM rm_users WHERE email = ${email} AND user_type = ${user_type}
             `;
 
             if (!user) {
@@ -166,7 +166,7 @@ export const auth = new Elysia({ prefix: '/auth' })
         let otpData;
         try{
         var [res] = await sql`
-        SELECT user_id, phone_number, is_verified FROM users WHERE email = ${email}
+        SELECT user_id, phone_number, is_verified FROM rm_users WHERE email = ${email}
         `;
           console.log("res: ", res);
         if(res.length === 0) {
@@ -234,7 +234,7 @@ export const auth = new Elysia({ prefix: '/auth' })
         }
 
         const [resQ] = await sql`
-            UPDATE users
+            UPDATE rm_users
             SET is_verified = true
             WHERE user_id = ${user.user_id} RETURNING *
         `;
@@ -287,14 +287,14 @@ export const auth = new Elysia({ prefix: '/auth' })
     //           const buffer = await file.arrayBuffer();
     //           console.log("File info: ", file.type, file.name, file.size);
     //           const result = await cloudinary.uploader.upload(`data:${file.type};base64,${Buffer.from(buffer).toString('base64')}`, {
-    //             asset_folder: 'users',
+    //             asset_folder: 'rm_users',
     //             public_id: `user_${userId}`,
     //           });
 
     //           if(result) console.log(`Image upload successful!, res: ${result.secure_url}`)
 
     //           const sqlRes = await sql`
-    //           UPDATE public.users
+    //           UPDATE public.rm_users
     //           SET image = ${result.secure_url}
     //           WHERE ID = ${userId}
     //           `
@@ -331,7 +331,7 @@ export const auth = new Elysia({ prefix: '/auth' })
 
         try {
         const [user] = await sql`
-            SELECT * FROM users WHERE email = ${email}
+            SELECT * FROM rm_users WHERE email = ${email}
         `;
 
         if (!user) {
@@ -381,7 +381,7 @@ export const auth = new Elysia({ prefix: '/auth' })
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
         await sql`
-            UPDATE users
+            UPDATE rm_users
             SET password = ${hashedPassword}
             WHERE user_id = ${reset.user_id}
         `;
@@ -424,7 +424,7 @@ export const auth = new Elysia({ prefix: '/auth' })
         if(!userId) { return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401,});}
 
         const [res] = await sql`
-        update users set address = ${JSON.stringify(address)} where user_id = ${userId}  returning *
+        update rm_users set address = ${JSON.stringify(address)} where user_id = ${userId}  returning *
         `;
           console.log("Address set successfully: ", res);
         return { message: 'Address updated successfully', data: JSON.stringify(res) };
@@ -461,7 +461,7 @@ export const auth = new Elysia({ prefix: '/auth' })
         }
 
         const [res] = await sql`
-        UPDATE users
+        UPDATE rm_users
         SET ${sql(updateData)}
         WHERE user_id = ${userId}
         RETURNING *
@@ -495,7 +495,7 @@ export const auth = new Elysia({ prefix: '/auth' })
     const {password, phone_number} = body;
     try {
         const [user] = await sql`
-        SELECT * FROM public.users WHERE user_id = ${userId}
+        SELECT * FROM public.rm_users WHERE user_id = ${userId}
         `;
         
         if(!user) {
@@ -519,7 +519,7 @@ export const auth = new Elysia({ prefix: '/auth' })
 
     try {
         const result = await sql`
-        DELETE FROM users WHERE user_id = ${userId} RETURNING *
+        DELETE FROM rm_users WHERE user_id = ${userId} RETURNING *
         `;
         console.log("User deleted successfully: ", result);
         if(result){return new Response(JSON.stringify({ message: 'User deleted successfully', result }), { status: 200 } );}
