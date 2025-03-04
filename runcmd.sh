@@ -9,7 +9,7 @@ sudo nano /etc/nginx/sites-available/api2.shalish.xyz
 #     server_name ap2.shalish.xyz;
 
 #     location / {
-#         proxy_pass http://0.0.0.0:11010;
+#         proxy_pass http://0.0.0.0:8000;
 #         proxy_set_header Host $host;
 #         proxy_set_header X-Real-IP $remote_addr;
 #         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -25,7 +25,7 @@ sudo nano /etc/nginx/sites-available/api2.shalish.xyz
 #     ssl_certificate_key /etc/letsencrypt/live/api2.shalish.xyz/privkey.pem;
 
 #     location / {
-#         proxy_pass http://0.0.0.0:11010;
+#         proxy_pass http://0.0.0.0:8000;
 #         proxy_set_header Host $host;
 #         proxy_set_header X-Real-IP $remote_addr;
 #         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

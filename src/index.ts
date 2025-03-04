@@ -572,7 +572,7 @@ import { payment } from './routes/payments';
  
 
         .listen({
-        port: process.env.PORT || 10101,
+        port: process.env.PORT || 8000,
         hostname: process.env.HOST || '0.0.0.0',
         idleTimeout: 255}
         );

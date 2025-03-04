@@ -14,10 +14,10 @@ RUN bun install
 COPY . .
 
 # Expose the port the app runs on
-EXPOSE 11010
+EXPOSE 8000
 
 # Set environment variables (override with Docker Compose or runtime)
-ENV PORT=11010
+ENV PORT=8000
 ENV HOST=0.0.0.0
 
 # Command to run the app
